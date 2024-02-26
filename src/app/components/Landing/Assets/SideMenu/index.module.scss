@@ -1,0 +1,48 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  mix-blend-mode: overlay;
+  gap: 2rem;
+
+  .item {
+    position: relative;
+    writing-mode: vertical-rl;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: .3s ease;
+    transform: rotate(180deg);
+    cursor: default;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 0%;
+      width: 1.5px;
+      background: #fff;
+      transition: 1s ease;
+      opacity: inherit;
+    }
+
+    &.link {
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-drag: none;
+
+      &:hover {
+        &::after {
+          height: 100%;
+          transition: .3s cubic-bezier(.5, 0, 0, 1.5);
+        }
+      }
+    }
+
+    &:hover {
+      opacity: .5 !important;
+    }
+  }
+}

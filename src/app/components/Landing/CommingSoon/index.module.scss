@@ -1,0 +1,26 @@
+$one: calc(5vw + 1vh);
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+
+  .title {
+    position: relative;
+
+    color: #6992c9;
+    font-size: calc($one * 1.2);
+    font-stretch: 150%;
+    font-weight: 300;
+    letter-spacing: calc($one * -.002);
+    text-shadow:
+      0 0 $one rgba(105, 147, 201, 1),
+      0 0 $one rgba(105, 147, 201, .5),
+      0 0 $one rgba(105, 147, 201, .25)
+    ;
+
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+}

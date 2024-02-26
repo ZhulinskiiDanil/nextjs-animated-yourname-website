@@ -1,0 +1,207 @@
+$one: calc(5vw + 1vh);
+
+.container {
+  --x: .5;
+  --y: .5;
+  --shadowOpacity: 0;
+  $velocityX: 5vw;
+  $velocityY: 5vh;
+
+  z-index: 0;
+  position: relative;
+  width: calc(100vw + $velocityX);
+  min-height: calc(100vh + $velocityY);
+  overflow: hidden;
+
+  &::after,
+  &::before {
+    content: '';
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    transition: 3s cubic-bezier(.17,.67,.52,.89);
+  }
+
+  &::before {
+    background: linear-gradient(to top, #000, transparent 10vh);
+  }
+
+  &::after {
+    background: linear-gradient(to top, #000, transparent 40vh);
+    opacity: calc(var(--shadowOpacity) * 1.5);
+  }
+
+  .shadow {
+    z-index: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    &::after,
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+  
+    &::before {
+      background: linear-gradient(
+        30deg, rgb(86 160 245 / 24%) 10%, transparent 50%
+      );
+    }
+  
+    &::after {
+      background: linear-gradient(
+        -30deg, #000 10%, transparent 50%
+      );
+    }
+  }
+
+  .texts {
+    --yPercent: 0%;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    .text {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate3d(-50%, calc(-50% + var(--yPercent)), 0);
+      width: 100%;
+      height: 100%;
+
+      font-size: calc($one * 1.5);
+      font-stretch: 150%;
+      font-weight: 800;
+      white-space: nowrap;
+      mix-blend-mode: overlay;
+      transition: 3s cubic-bezier(.17,.67,.52,.89);
+      transition-property: mask-position, transform;
+
+      [data-text] {
+        --x: 0;
+        --y: 0;
+        --rotate: 0;
+        --scale: 0;
+        --distance: 0;
+
+        transform: translate3d(
+          calc($velocityX * -2 * var(--x) + $velocityX / 2),
+          calc($velocityY * -2 * var(--y) + $velocityY / 2),
+          0
+        );
+        transition: 3s cubic-bezier(.17,.67,.52,.89);
+        user-select: none;
+        -webkit-user-drag: none;
+
+        [data-letter] {
+          @function withDistance($value: 1) {
+            @return calc($value * (1 - var(--distance)))
+          };
+
+          @function withReverseDistance($value) {
+            @return calc(1 - withDistance($value))
+          };
+
+          position: relative;
+          display: inline-block;
+          opacity: calc(1 - withDistance(1));
+          transform:
+            translate3d(
+              calc(withDistance(var(--x)) * 1vw),
+              calc(withDistance(var(--y)) * 1vh),
+              0
+            )
+            rotate(calc(withDistance(var(--rotate)) * 1deg))
+            scale(withReverseDistance(var(--scale)))
+            scaleY(calc(1 + withDistance(1)))
+          ;
+          filter: blur(calc(withDistance() * 10px));
+          transition: 1s cubic-bezier(.17,.67,.52,.89);
+          will-change: filter;
+        }
+      }
+    }
+
+    > :not(.front) span {
+      background: linear-gradient(
+        45deg, #fff, transparent
+      );
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .front {
+      z-index: 1;
+      color: transparent;
+      -webkit-text-stroke: calc($one * .01) #fff;
+      mask: url('/images/front1.png') center center;
+      mask-size: cover;
+      mask-position:
+        calc(50% + ($velocityX * var(--x) - $velocityX))
+        calc(100% + ($velocityY * var(--y)))
+      ;
+    }
+  }
+
+  .image {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate3d(-50%, -50%, 0);
+    transition: 3s cubic-bezier(.17,.67,.52,.89);
+
+    img {
+      object-fit: cover;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    &.front {
+      transform: translate3d(
+        calc(-50% + $velocityX * var(--x) - $velocityX),
+        calc(-50% + $velocityY * var(--y)),
+        0
+      );
+
+      img {
+        object-position: center bottom;
+      }
+    }
+
+    &.back {
+      --object-position-x: 0%;
+
+      z-index: -1;
+      transform: translate3d(
+        calc(-50% - $velocityX * var(--x)),
+        calc(-50% - $velocityY * var(--y)),
+        0
+      );
+
+      img {
+        object-position: center calc(50% + var(--object-position-x));
+        transition: 1s cubic-bezier(.17,.67,.52,.89);
+      }
+    }
+  }
+}
